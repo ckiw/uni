@@ -1,0 +1,10 @@
+faire un script php qui : recherche les médias et en extrait les metadonnées vers des fichiers json
+faire un script php qui permet d'éditer des fichiers JSON (click sur Fait)
+faire un script php de création de fichiers JSON (click sur la map ou sur la timeline)
+trouver comment stocker les données correctement un fichier par Fait ou un gros fichier qui regroupe tout
+trouver une minigalerie qui génère des 
+sélection d'une zone sur le carte pour voir uniquement les faits correcpondants sur la timeline
+afficher le trajet pour un evenement (lignes qui relient les points, distance,mode transport)
+reflechir à l'interface homme machine
+diaporama augmenté
+retrouver le projet mozilla de faire des vidéos intégrées avec le reste de la page web

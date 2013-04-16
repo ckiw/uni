@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Leaflet Quick Start Guide Example</title>
+        <meta charset="utf-8" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css" />
+        <!--[if lte IE 8]><link rel="stylesheet" href="../dist/leaflet.ie.css" /><![endif]-->
+
+        <style type="text/css">
+            body {
+                font-size: 10pt;
+                font-family: verdana, sans, arial, sans-serif;
+            }
+        </style>
+
+        <script src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
+        <script type="text/javascript" src="timeline.js"></script>
+        <link rel="stylesheet" type="text/css" href="timeline.css">
+
+
+    </head>
+    <body onload="drawVisualization();">
+
+        <div id="mytimeline"></div>
+        <div>
+            <div id="resultat" style="width: 50%; height: 398px; float:left;" >&nbsp;</div>
+            <div id="map" style="width: 50%; height: 398px; position:static; float: left;"></div>
+        </div>
+
+        <script>
+
+        var timeline;
+        var data;
+        var geo1 = 50.64866;
+        var geo2 = 3.00294;
+
+
+        var map = L.map('map').setView([50.64866, 3.00294], 13);
+
+        function locatePopup() {
+            map.locate({setView: true});
+            var latlng = new map.getCenter()
+            L.marker(latlng).addTo(map)
+                    .bindPopup("<b>Hello world!</b><br />It's my house.").openPopup();
+        }
+
+        L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '<a onClick="locatePopup()">Locate</a> Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+        }).addTo(map);
+
+
+        L.marker([50.64866, 3.00294]).addTo(map)
+                .bindPopup("<b>Hello world!</b><br />It's my house.").openPopup();
+
+
+
+        L.circle([51.508, -0.11], 500, {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5
+        }).addTo(map).bindPopup("I am a circle.");
+
+        L.polygon([
+            [51.509, -0.08],
+            [51.503, -0.06],
+            [51.51, -0.047]
+        ]).addTo(map).bindPopup("I am a polygon.");
+
+
+        var popup = L.popup();
+
+        function onMapClick(e) {
+            popup
+                    .setLatLng(e.latlng)
+                    .setContent("You clicked the map at " + e.latlng.toString())
+                    .openOn(map);
+        }
+
+        map.on('click', onMapClick);
+
+        //timeline
+
+        function fonc() {
+            lat = 50.63346;
+            lng = 3.04542;
+            var latlng = new L.LatLng(lat, lng);
+            map.panTo(latlng);
+            http = createRequestObject();
+            http.open('GET', 'http://api.geonames.org/findNearbyPlaceNameJSON?lat=' + lat + '&lng=' + lng + '&username=wildkiw', true);
+            http.onreadystatechange = (function()
+            {
+                if (http.readyState === 4)
+                {
+                    if (http.status === 200)
+                    {
+                        var lieu = validateJSON(http.responseText);
+                        if (lieu !== false)
+                        {
+                            var str = lieu.geonames[0].countryName+' '+lieu.geonames[0].adminName1+' '+lieu.geonames[0].name;
+                            
+
+                            document.getElementById('resultat').innerHTML = str;
+                        }
+                        else
+                        {
+                            document.getElementById('resultat').innerHTML = "JSON invalide";
+                        }
+                    }
+                    else
+                    {
+                        alert('Pas glop pas glop');
+                    }
+                }
+            });
+            http.send(null);
+        }
+
+
+
+        // Called when the Visualization API is loaded.
+        function drawVisualization() {
+            // Create a JSON data table
+            data = [
+                {
+                    'start': new Date(2010, 7, 23),
+                    'content': '<a  href="#" onClick="fonc()"; >Conversation</a><br><img src="DSC01320.JPG" style="width:32px; height:32px;">'
+                },
+                {
+                    'start': new Date(2010, 7, 23, 23, 0, 0),
+                    'content': 'Mail from boss<br><img src="img/mail-icon.png" style="width:32px; height:32px;">'
+                },
+                {
+                    'start': new Date(2010, 7, 24, 16, 0, 0),
+                    'content': 'Report'
+                },
+                {
+                    'start': new Date(2010, 7, 26),
+                    'end': new Date(2010, 8, 2),
+                    'content': 'Traject A'
+                },
+                {
+                    'start': new Date(2010, 7, 28),
+                    'content': 'Memo<br><img src="img/notes-edit-icon.png" style="width:48px; height:48px;">'
+                },
+                {
+                    'start': new Date(2010, 7, 29),
+                    'content': 'Phone call<br><img src="img/Hardware-Mobile-Phone-icon.png" style="width:32px; height:32px;">'
+                },
+                {
+                    'start': new Date(2010, 7, 31),
+                    'end': new Date(2010, 8, 3),
+                    'content': 'Traject B'
+                },
+                {
+                    'start': new Date(2010, 8, 4, 12, 0, 0),
+                    'content': 'Report<br><img src="img/attachment-icon.png" style="width:32px; height:32px;">'
+                }
+            ];
+
+            // specify options
+            var options = {
+                'width': '100%',
+                'height': '300px',
+                'editable': true, // enable dragging and editing events
+                'style': 'box'
+            };
+
+            // Instantiate our timeline object.
+            timeline = new links.Timeline(document.getElementById('mytimeline'));
+
+            function onRangeChanged(properties) {
+                document.getElementById('info').innerHTML += 'rangechanged ' +
+                        properties.start + ' - ' + properties.end + '<br>';
+            }
+
+
+            // attach an event listener using the links events handler
+            links.events.addListener(timeline, 'rangechanged', onRangeChanged);
+
+            // Draw our timeline with the created data and options
+            timeline.draw(data, options);
+        }
+//requete api geonames
+        var http; // Notre objet XMLHttpRequest
+
+        function createRequestObject()
+        {
+            var http;
+            if (window.XMLHttpRequest)
+            { // Mozilla, Safari, IE7 ...
+                http = new XMLHttpRequest();
+            }
+            else if (window.ActiveXObject)
+            { // Internet Explorer 6
+                http = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            return http;
+        }
+
+        function validateJSON(jsonText)
+        {
+            return !(/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(
+                    jsonText.replace(/"(\\.|[^"\\])*"/g, '')))
+                    && eval('(' + jsonText + ')');
+        } // validateJSON(jsonText)
+        </script>
+
+
+
+    </body>
+</html>
+
